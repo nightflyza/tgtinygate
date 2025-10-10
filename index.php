@@ -4,7 +4,7 @@
  * tgtinygate -  A tiny PHP gateway for receiving and forwarding Telegram bot webhooks to a private backend.  
  */
 
-$botHookUrl = 'https://yourbackendhere/?module=hook';
+$botHookUrl = 'http://localhost/dev/ubilling/?module=testing';
 $connectTimeout = 5;
 $timeout = 10;
 
