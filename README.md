@@ -1,4 +1,4 @@
-# tgtinygate
+# tgtinygate aka TGTG
 A tiny PHP gateway for receiving and forwarding Telegram bot webhooks to a private backend. 
 
 ## System requirements
@@ -22,6 +22,14 @@ $timeout = 10;
 **Optional settings:**
 - **`$connectTimeout`** - Connection timeout in seconds (default: 5)
 - **`$timeout`** - Total request timeout in seconds (default: 10)
+
+## Security Notice
+
+**Important:** Use a random folder name instead of `tgtinygate_changeme` for better security. The folder name becomes part of your webhook URL, so using a random name makes it harder for attackers to guess your endpoint.
+
+Example: `tgtinygate_a7b19c2d4e1f3` or just `tgtg_9W8k2m5p7q`
+
+## Setup Instructions
 
 # FreeBSD quick setup
 
