@@ -32,7 +32,7 @@ if (function_exists('getallheaders')) {
 
 $forwardHeaders = array();
 foreach ($incomingHeaders as $hName => $hValue) {
-    if (strtolower($hName) === 'host' || strtolower($hName) === 'content-length') continue;
+    if (strtolower($hName) === 'host' or strtolower($hName) === 'content-length' or strtolower($hName)=='x-real-ip' or strtolower($hName)=='x-forwarded-for')  continue;
     $forwardHeaders[] = $hName . ': ' . $hValue;
 }
 
