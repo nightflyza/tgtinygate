@@ -7,6 +7,7 @@
 $botHookUrl = 'http://yourhost.com/billing/?module=claptrapbot&auth=changeme';
 $connectTimeout = 5;
 $timeout = 10;
+$hideExtIP = true;
 
 /**
  * End of config section
@@ -32,18 +33,30 @@ if (function_exists('getallheaders')) {
 
 $forwardHeaders = array();
 foreach ($incomingHeaders as $hName => $hValue) {
-    if (strtolower($hName) === 'host' or strtolower($hName) === 'content-length' or strtolower($hName)=='x-real-ip' or strtolower($hName)=='x-forwarded-for')  continue;
-    $forwardHeaders[] = $hName . ': ' . $hValue;
+    $shouldSkip = false;
+    
+    if (strtolower($hName) === 'host' or strtolower($hName) === 'content-length') {
+        $shouldSkip = true;
+    } else {
+        if ($hideExtIP and (strtolower($hName) == 'x-real-ip' or strtolower($hName) == 'x-forwarded-for')) {
+            $shouldSkip = true;
+        }
+    }
+    
+    if (!$shouldSkip) {
+        $forwardHeaders[] = $hName . ': ' . $hValue;
+    }
 }
 
 $hasContentType = false;
 foreach ($forwardHeaders as $fh) {
     if (stripos($fh, 'Content-Type:') === 0) {
         $hasContentType = true;
-        break;
     }
 }
-if (!$hasContentType) $forwardHeaders[] = 'Content-Type: application/octet-stream';
+if (!$hasContentType) {
+    $forwardHeaders[] = 'Content-Type: application/octet-stream';
+}
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $botHookUrl);
@@ -80,15 +93,17 @@ $skipFirstLine = true;
 foreach ($lines as $line) {
     if ($skipFirstLine) {
         $skipFirstLine = false;
-        continue;
-    }
-    if ($line === '') continue;
-    $pos = strpos($line, ':');
-    if ($pos !== false) {
-        $name = trim(substr($line, 0, $pos));
-        $value = trim(substr($line, $pos + 1));
-        if (in_array(strtolower($name), array('transfer-encoding', 'content-length', 'connection'))) continue;
-        header($name . ': ' . $value, false);
+    } else {
+        if ($line !== '') {
+            $pos = strpos($line, ':');
+            if ($pos !== false) {
+                $name = trim(substr($line, 0, $pos));
+                $value = trim(substr($line, $pos + 1));
+                if (!in_array(strtolower($name), array('transfer-encoding', 'content-length', 'connection'))) {
+                    header($name . ': ' . $value, false);
+                }
+            }
+        }
     }
 }
 
@@ -105,4 +120,5 @@ header(sprintf('HTTP/1.1 %d %s', (int)$httpCode, $reason));
 
 print($responseBody);
 exit;
+
 

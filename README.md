@@ -14,6 +14,7 @@ After downloading the files, edit `index.php` and update the following settings:
 $botHookUrl = 'http://yourhost.com/billing/?module=claptrapbot&auth=changeme';
 $connectTimeout = 5;
 $timeout = 10;
+$hideExtIP = true;
 ```
 
 **Required changes:**
@@ -22,6 +23,7 @@ $timeout = 10;
 **Optional settings:**
 - **`$connectTimeout`** - Connection timeout in seconds (default: 5)
 - **`$timeout`** - Total request timeout in seconds (default: 10)
+- **`$hideExtIP`** - Hide external IP headers (x-real-ip, x-forwarded-for) from forwarded requests (default: true)
 
 ## Security Notice
 
